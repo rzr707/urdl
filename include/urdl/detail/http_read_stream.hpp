@@ -203,7 +203,8 @@ public:
       if (socket_.lowest_layer().is_open())
       {
         ec = boost::asio::error::already_open;
-        URDL_CORO_YIELD(socket_.get_io_service().post(
+
+        URDL_CORO_YIELD(static_cast<boost::asio::io_context&>(socket_.get_executor().context()).post(
               boost::asio::detail::bind_handler(*this, ec)));
         handler_(ec);
         return;
@@ -520,7 +521,9 @@ public:
     {
       boost::system::error_code ec;
       std::size_t bytes_transferred = read_some(buffers, ec);
-      socket_.get_io_service().post(boost::asio::detail::bind_handler(
+
+      auto& context = static_cast<boost::asio::io_context&>(socket_.get_executor().context());
+      context.post(boost::asio::detail::bind_handler(
             handler, ec, bytes_transferred));
       return;
     }

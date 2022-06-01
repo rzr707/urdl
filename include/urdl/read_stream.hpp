@@ -113,14 +113,14 @@ public:
       file_(io_service, options_),
       http_(io_service, options_),
 #if !defined(URDL_DISABLE_SSL)
-      ssl_context_(io_service, boost::asio::ssl::context::sslv23),
+      ssl_context_(boost::asio::ssl::context::sslv23),
       https_(io_service, options_, ssl_context_),
 #endif // !defined(URDL_DISABLE_SSL)
       protocol_(unknown)
   {
 #if !defined(URDL_DISABLE_SSL)
     ssl_context_.set_verify_mode(boost::asio::ssl::context::verify_peer);
-    SSL_CTX_set_default_verify_paths(ssl_context_.impl());
+    SSL_CTX_set_default_verify_paths(ssl_context_.native_handle());
 #endif // !defined(URDL_DISABLE_SSL)
   }
 
@@ -378,16 +378,15 @@ public:
   async_open(const url& u, Handler handler)
   {
 #if (BOOST_VERSION >= 105400)
-    typedef typename boost::asio::handler_type<Handler,
-      void (boost::system::error_code)>::type real_handler_type;
-    real_handler_type real_handler(handler);
-    boost::asio::async_result<real_handler_type> result(real_handler);
+    typename boost::asio::async_result<Handler, void (boost::system::error_code)>::completion_handler_type real_handler(handler);
+
+    boost::asio::async_result<Handler, void(boost::system::error_code)> result(real_handler);
 #else // (BOOST_VERSION >= 105400)
     typedef Handler real_handler_type;
     Handler real_handler(handler);
 #endif // (BOOST_VERSION >= 105400)
 
-    open_coro<real_handler_type>(this, u, real_handler)(
+    open_coro<decltype(real_handler)>(this, u, real_handler)(
         boost::system::error_code());
 
 #if (BOOST_VERSION >= 105400)
@@ -659,10 +658,10 @@ public:
   async_read_some(const MutableBufferSequence& buffers, Handler handler)
   {
 #if (BOOST_VERSION >= 105400)
-    typedef typename boost::asio::handler_type<Handler,
-      void (boost::system::error_code, std::size_t)>::type real_handler_type;
-    real_handler_type real_handler(handler);
-    boost::asio::async_result<real_handler_type> result(real_handler);
+    typename boost::asio::async_result<Handler,
+      void (boost::system::error_code, std::size_t)>::completion_handler_type real_handler(handler);
+    boost::asio::async_result<Handler,
+        void(boost::system::error_code, std::size_t)> result(real_handler);
 #else // (BOOST_VERSION >= 105400)
     Handler real_handler(handler);
 #endif // (BOOST_VERSION >= 105400)

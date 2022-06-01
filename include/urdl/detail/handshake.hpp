@@ -41,7 +41,7 @@ void async_handshake(boost::asio::ip::tcp::socket& socket,
     const std::string& /*host*/, Handler handler)
 {
   boost::system::error_code ec;
-  socket.get_io_service().post(boost::asio::detail::bind_handler(handler, ec));
+  static_cast<boost::asio::io_context&>(socket.get_executor().context()).post(boost::asio::detail::bind_handler(handler, ec));
 }
 
 #if !defined(URDL_DISABLE_SSL)
@@ -167,9 +167,9 @@ inline boost::system::error_code handshake(
     return ec;
 
   // Verify the certificate returned by the host.
-  if (X509* cert = SSL_get_peer_certificate(socket.impl()->ssl))
+  if (X509* cert = SSL_get_peer_certificate(socket.native_handle()))
   {
-    if (SSL_get_verify_result(socket.impl()->ssl) == X509_V_OK)
+    if (SSL_get_verify_result(socket.native_handle()) == X509_V_OK)
     {
       if (certificate_matches_host(cert, host))
         ec = boost::system::error_code();
@@ -213,9 +213,9 @@ public:
     }
 
     // Verify the certificate returned by the host.
-    if (X509* cert = SSL_get_peer_certificate(socket_.impl()->ssl))
+    if (X509* cert = SSL_get_peer_certificate(socket_.native_handle()))
     {
-      if (SSL_get_verify_result(socket_.impl()->ssl) == X509_V_OK)
+      if (SSL_get_verify_result(socket_.native_handle()) == X509_V_OK)
       {
         if (certificate_matches_host(cert, host_))
           ec = boost::system::error_code();
