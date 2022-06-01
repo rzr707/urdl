@@ -8,8 +8,8 @@ Depends on latest OpenSSL and Boost libraries + buildable as a static library on
 * Conan package manager installed (https://conan.io/downloads.html) + PATH added
 ### Build
 * Open Developer Command Prompt for VS 2019
-* > cd urdl\build
 * > conan profile new default --detect --force
-* > conan install .. --build=missing
+* > conan install . --build=missing
+* > cd build
 * > cmake ..
 * > msbuild urdl.sln /p:Configuration=Release
