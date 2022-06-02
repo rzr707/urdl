@@ -9,7 +9,7 @@ file(GLOB URDL_SOURCES
      "src/*.cpp"
 )
 
-include (conanbuildinfo.cmake)
+include (${CMAKE_SOURCE_DIR}/3rd_party/urdl/conanbuildinfo.cmake)
 conan_basic_setup()
 
 include_directories ("include")
