@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 3.16)
 
 project (urdl)
-set (CMAKE_CXX_STANDARD 20)
 
 file(GLOB URDL_SOURCES
      "include/*.hpp"
@@ -9,10 +8,10 @@ file(GLOB URDL_SOURCES
      "src/*.cpp"
 )
 
-include (${CMAKE_SOURCE_DIR}/build/conanbuildinfo.cmake)
+include (${CMAKE_SOURCE_DIR}/${DEPS_BUILD_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-include_directories ("include")
+include_directories("include")
 
 add_library (${PROJECT_NAME} STATIC
              ${URDL_SOURCES}
