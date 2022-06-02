@@ -15,6 +15,6 @@ conan_basic_setup()
 
 include_directories("include")
 
-add_library (${PROJECT_NAME} STATIC
+add_library (${PROJECT_NAME}
              ${URDL_SOURCES}
 )
