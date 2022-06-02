@@ -8,6 +8,8 @@ file(GLOB URDL_SOURCES
      "src/*.cpp"
 )
 
+set(URDL_PUBLIC_INCLUDE_HEADERS ${PROJECT_SOURCE_DIR}/include PARENT_SCOPE)
+
 include (${CMAKE_SOURCE_DIR}/${DEPS_BUILD_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
@@ -16,5 +18,3 @@ include_directories("include")
 add_library (${PROJECT_NAME} STATIC
              ${URDL_SOURCES}
 )
-
-target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS} wsock32 ws2_32 user32 advapi32 gdi32)
